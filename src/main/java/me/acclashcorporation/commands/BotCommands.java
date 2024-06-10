@@ -19,23 +19,36 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BotCommands extends ListenerAdapter {
 
-
-
     List<Message> msgs;
-
-
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
-        if (event.getName().equals("info")) {
-            event.reply("ACDiscordBot version 0.4 is up and running using JDA version 5.0.0-alpha.12! It was programmed by Anston Sorensen (Tennessine).").setEphemeral(true).queue();
-        } else if (event.getName().equals("ver")) {
-            event.reply("You are using ACDiscordBot 0.4 programmed by Anston Sorensen (Tennessine).").setEphemeral(true).queue();
+        if (event.getName().equals("ver")) {
+            String version = "";
+            String filePath = "build.gradle";
+            String artifactName = "JDA";
+
+            try {
+                String content = new String(Files.readAllBytes(Paths.get(filePath)));
+                version = extractDependencyVersion(content, artifactName);
+                if (version == null) {
+                    System.out.println("Artifact not found: " + artifactName + ". This is bad. Please report it to the developer.");
+                    return;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            event.reply("You are using ACDiscordBot 0.4 with JDA version " + version + ". Programmed by Anston Sorensen (Tennessine/Tennessene).").setEphemeral(true).queue();
         } else if (event.getName().equals("welcome") || event.getName().equals("welcomeedit")) {
             if (event.getMember().isOwner()) {
                 MessageEmbed welcome = new EmbedBuilder()
@@ -93,8 +106,8 @@ public class BotCommands extends ListenerAdapter {
 
                     if (staffChannel != null) {
 
-                        net.dv8tion.jda.api.interactions.components.buttons.Button muteMember = net.dv8tion.jda.api.interactions.components.buttons.Button.danger("mute-member", "Mute Member");
-                        net.dv8tion.jda.api.interactions.components.buttons.Button ignoreAlert = Button.success("ignore-alert", "Ignore Alert");
+                        Button muteMember = Button.danger("mute-member", "Mute Member");
+                        Button ignoreAlert = Button.success("ignore-alert", "Ignore Alert");
 
                         Message message = new MessageBuilder()
                                 .append(event.getMember().getEffectiveName())
@@ -171,5 +184,22 @@ public class BotCommands extends ListenerAdapter {
                 event.reply("You aren't the server owner!").setEphemeral(true).queue();
             }
         }
+    }
+
+    public static void main(String[] args) {
+
+    }
+
+    private static String extractDependencyVersion(String content, String artifactName) {
+        // Define a regex pattern to match dependencies in the build.gradle file
+        // This pattern assumes the dependency declaration is in the form of "group:artifact:version"
+        String regex = "[^:]+:" + Pattern.quote(artifactName) + ":([\\d.]+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(content);
+
+        if (matcher.find()) {
+            return matcher.group(1); // Return the version part of the dependency declaration
+        }
+        return null;
     }
 }
