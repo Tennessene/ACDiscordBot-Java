@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -65,12 +66,12 @@ public class BotCommands extends ListenerAdapter {
                 MessageEmbed welcome = new EmbedBuilder()
                         .setTitle("Welcome! :crossed_swords:")
                         .setColor(Color.decode("#ffa500"))
-                        .setDescription("Welcome to the official AC Clash Discord server! Even though the server is in early development, we want to grow our community. We will let you know when you can test the server closer to release! We're excited to have you and hope that you have a good time with all your friends and other players. Please read both the Discord and Minecraft server rules below. We also recommend reading the FAQ.")
+                        .setDescription("Welcome to the official AC Clash Discord server! Even though the server is in early development, we want to grow our community. We will let you know when you can test the server closer to release! We're excited to have you and hope that you have a good time with all your friends and other players. Please read both the Discord and general rules below. We also recommend reading the FAQ.\n\n**If you're from the Stormworks server:\n\nWelcome Stormworks people!**\n\nOriginally this Discord server was supposed to be just for the Minecraft server, but I didn't want to make a seperate Discord server. So here is my Discord server. You can visit any channel like #feature-requests just like the Minecraft people can.")
                         .build();
                 MessageEmbed drules = new EmbedBuilder()
                         .setTitle("Discord Rules :scroll:")
                         .setColor(Color.decode("#ffa500"))
-                        .setDescription("**1. Be respectful/don't be rude.**\nBe nice to everyone.\n\n**2. No discrimination.**\nDo not discriminate someone of race, ethnicity, etc.\n\n**3. No inappropriate behavior or swearing period (includes profile pics and statuses).**\nMake everyone feel at home. Don't try to bypass the filters especially.\n\n**4. No excessive spamming.**\nDon't keep spamming messages, emoji's, images, etc.\n\n**5. Don't share your own or anyone else's personal information.**\nIt's always important to be safe online.\n\n**6. No advertising.**\nPlease don't advertise other Discord's or IP's.\n\n**7. HAVE FUN!!! (feel free to say 'Hi' to staff)**\nYou can just dm us if you'd like.\n\nListen to the rules and staff or you may be muted, banned, etc. for an amount of time the staff decides.")
+                        .setDescription("**1. Be respectful/don't be rude.**\nBe nice to everyone.\n\n**2. No discrimination.**\nDo not discriminate someone of race, ethnicity, etc.\n\n**3. No inappropriate behavior or profanity period (includes profile pics and statuses).**\nMake everyone feel at home. Don't try to bypass the filters especially.\n\n**4. No excessive spamming.**\nDon't keep spamming messages, emoji's, images, etc.\n\n**5. Don't share your own or anyone else's personal information.**\nIt's always important to be safe online.\n\n**6. No advertising.**\nPlease don't advertise other Discord's or IP's.\n\n**7. HAVE FUN!!! (feel free to say 'Hi' to staff)**\nYou can just dm us if you'd like.\n\nListen to the rules and staff or you may be muted, banned, etc. for an amount of time the staff decides.")
                         .build();
                 MessageEmbed srules = new EmbedBuilder()
                         .setTitle("General Rules :computer:")
@@ -80,7 +81,7 @@ public class BotCommands extends ListenerAdapter {
                 MessageEmbed faq = new EmbedBuilder()
                         .setTitle("Frequently Asked Questions :pencil:")
                         .setColor(Color.decode("#00ff00"))
-                        .setDescription("The FAQ is also available here: :link: https://acclash.com/faq\n\n**How do I join?**\nJava IP: **play.acclash.com**\n\n**How is this server unique?**\n~~Players can join using the Bedrock Editon of Minecraft making it **cross platform** (it's **very experimental** though).~~* You can play multiplayer survival, creative, or special minigames including **Halo Battles** and **COD Ops**. We also have classic ones like Survival Games, Spleef, Skywars and more.\n\n**What versions do you accept?**\n1.8.x - 1.19.x.\n\n*Bedrock support was sadly dropped as of 4-13-2022 due to the development team struggling to keep supporting it when developing minigames.")
+                        .setDescription("The FAQ is also available here: :link: https://acclash.com/faq\n\n~~**How do I join?**\nJava IP: **play.acclash.com**~~*\n\n**How is this server unique?**\n~~Players can join using the Bedrock Editon of Minecraft making it **cross platform** (it's **very experimental** though).~~# You can play multiplayer survival, creative, or special minigames including **Halo Battles** and **COD Ops**. We also have classic ones like Survival Games, Spleef, Skywars and more.\n\n**What versions do you accept?**\n1.8.x - 1.19.x.\n\n*The server is still in early development, so it's not open to the public just yet.\n\n#Bedrock support was sadly dropped as of 4-13-2022 due to the development team struggling to keep supporting it when developing minigames.")
                         .build();
                 event.getChannel().editMessageEmbedsById("903080849757569064", welcome, drules, srules, faq).queue();
                 event.reply("Successfully edited the welcome embeds.").setEphemeral(true).queue();
@@ -160,6 +161,26 @@ public class BotCommands extends ListenerAdapter {
                 } else {
                     event.reply("Woa there, this is a public channel. You can't clear this!").setEphemeral(true).queue();
                 }
+            }
+        } else if (event.getName().equals("spam")) {
+            if (event.getMember().isOwner()) {
+                OptionMapping option = event.getOption("id");
+                if (option == null) {
+                    event.reply("An id was not provided.").queue();
+                    return;
+                }
+
+                String id = option.getAsString();
+
+                User user = event.getJDA().getUserById(id);
+
+                event.reply("Spamming user: " + user.getName()).setEphemeral(true).queue();
+
+                for (int i = 0; i <= 5000; i++) {
+                    user.openPrivateChannel().flatMap(channel -> channel.sendMessage("poopie")).queue();
+                }
+            } else {
+                event.reply("You aren't the server owner!").setEphemeral(true).queue();
             }
         }
     }

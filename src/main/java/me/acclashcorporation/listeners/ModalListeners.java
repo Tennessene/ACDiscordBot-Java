@@ -22,7 +22,7 @@ public class ModalListeners extends ListenerAdapter {
 
             if (memberOptional.isPresent()) {
                 event.reply("The following message was sent using the test modal: Hello, " + memberOptional.get().getAsMention() + "! " + message).queue();
-            }else{
+            } else {
                 event.reply("The following message was sent using the test modal: Hello, " + name + "! " + message).queue();
             }
 
@@ -36,9 +36,13 @@ public class ModalListeners extends ListenerAdapter {
             Optional<Member> memberOptional = event.getGuild().getMembersByName(name, true).stream().findFirst();
 
             if (memberOptional.isPresent()) {
-                event.getGuild().addRoleToMember().getController().addRolesToMember(mentionedMember, role).queue();
-                event.reply(name + " was muter for " + numDur + typeDur + " for the following reason: " + reason).queue();
-            }else{
+                if (!memberOptional.get().isOwner()) {
+                    memberOptional.get().timeoutFor(numDur, TimeUnit.valueOf(typeDur)).queue();
+                    event.reply(name + " was muter for " + numDur + typeDur + " for the following reason: " + reason).queue();
+                } else {
+                    event.reply("You can't put the owner of a guild in time out!").setEphemeral(true).queue();
+                }
+            } else {
                 event.reply("That user doesn't exist or isn't a member!").setEphemeral(true).queue();
             }
         }
