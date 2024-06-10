@@ -1,5 +1,7 @@
 package me.acclashcorporation.listeners;
 
+import me.acclashcorporation.DiscordBot;
+import me.acclashcorporation.files.Config;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -11,12 +13,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class BotListeners extends ListenerAdapter {
 
-    private final String[] Bad_Words = {"poop", "fword", "fuck", "bitch", "shit", "damn"};
-
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 
-        for (String badWord : Bad_Words) {
+        for (String badWord : DiscordBot.getBadWords()) {
 
             if (event.getMessage().getContentRaw().contains(badWord)) {
 
@@ -24,7 +24,7 @@ public class BotListeners extends ListenerAdapter {
 
                     event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage("Your latest message contained profanity. Profanity isn't allowed at AC Clash. I reported you to the staff.")).queue();
 
-                    TextChannel staffChannel = event.getJDA().getTextChannelById("984866854902304799");
+                    TextChannel staffChannel = event.getJDA().getTextChannelById(Config.getProperty("channel.report.id"));
 
                     if (staffChannel != null) {
 

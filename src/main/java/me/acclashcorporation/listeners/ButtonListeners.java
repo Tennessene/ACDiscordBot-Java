@@ -18,7 +18,7 @@ public class ButtonListeners extends ListenerAdapter {
             String[] content = event.getMessage().getContentRaw().split(" ");
             String messageID = content[content.length - 1];
 
-            event.getGuild().getTextChannelById("675831474573803560").deleteMessageById(messageID).queue();
+            event.getGuild().getTextChannelById(event.getChannel().getId()).deleteMessageById(messageID).queue();
 
             event.reply("Message deleted.").queue();
 

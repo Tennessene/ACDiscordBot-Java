@@ -1,6 +1,7 @@
 package me.acclashcorporation;
 
 import me.acclashcorporation.commands.BotCommands;
+import me.acclashcorporation.files.Config;
 import me.acclashcorporation.listeners.BotListeners;
 import me.acclashcorporation.listeners.ButtonListeners;
 import me.acclashcorporation.listeners.ModalListeners;
@@ -15,25 +16,40 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import javax.security.auth.login.LoginException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DiscordBot extends ListenerAdapter {
 
-    public static void main(String[] args) throws LoginException, InterruptedException {
+    static List<String> badWords = Config.getListProperty("bad-words");
 
+    static List<String> staffOnlyChannels = Config.getListProperty("bad-words");
+
+    public static List<String> getBadWords() {
+        return badWords;
+    }
+
+    public static List<String> getStaffChannels() {
+        return staffOnlyChannels;
+    }
+
+    public static void main(String[] args) throws LoginException, InterruptedException {
+        Config.setup();
         try {
-            JDA bot = JDABuilder.createDefault("NzY4NjAzMjU3MDEzNTM0NzYy.X5C3kA.6SFWV_JBh7UZ1yMEyPB56rcqnLM")
-                    .setActivity(Activity.watching("Hart to Hart"))
+            JDA bot = JDABuilder.createDefault(Config.getProperty("token"))
+                    .setActivity(Activity.of(Activity.ActivityType.valueOf(Config.getProperty("activity.name")), Config.getProperty("activity.desc")))
                     .addEventListeners(new BotListeners(), new BotCommands(), new ModalListeners(), new ButtonListeners())
                     .build()
                     .awaitReady();
-            Guild guild = bot.getGuildById("675831474573803529");
+            Guild guild = bot.getGuildById(Config.getProperty("guild.id"));
 
             if (guild != null) {
                 bot.upsertCommand("info", "Display info about the bot.").queue();
                 bot.upsertCommand("ver", "Display the bot's version.").queue();
                 guild.upsertCommand("welcome", "Sends the original welcome embedded messages.").queue();
-                guild.upsertCommand("welcomeedit", "Edits the welcome embedded messages with the updated one.").queue();
+                guild.upsertCommand("welcomeedit", "Edits the welcome embedded messages with the updated one.")
+                        .addOptions(new OptionData(OptionType.STRING, "id", "The id of the message to be edited.", true))
+                        .queue();
                 guild.upsertCommand("food", "This command tests slash command arguments.")
                         .addOptions(new OptionData(OptionType.STRING, "name", "The name of your favorite food.", true))
                         .queue();
