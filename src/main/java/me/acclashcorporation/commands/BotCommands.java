@@ -33,9 +33,9 @@ public class BotCommands extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
         if (event.getName().equals("info")) {
-            event.reply("AC Clash bot version 0.3 is up and running using JDA version 5.0.0-alpha.12! It was programmed by Anston Sorensen (Tennessine).").setEphemeral(true).queue();
+            event.reply("ACDiscordBot version 0.4 is up and running using JDA version 5.0.0-alpha.12! It was programmed by Anston Sorensen (Tennessine).").setEphemeral(true).queue();
         } else if (event.getName().equals("ver")) {
-            event.reply("You are using AC Clash Bot 0.3 programmed by Anston Sorensen (Tennessine).").setEphemeral(true).queue();
+            event.reply("You are using ACDiscordBot 0.4 programmed by Anston Sorensen (Tennessine).").setEphemeral(true).queue();
         } else if (event.getName().equals("welcome") || event.getName().equals("welcomeedit")) {
             if (event.getMember().isOwner()) {
                 MessageEmbed welcome = new EmbedBuilder()

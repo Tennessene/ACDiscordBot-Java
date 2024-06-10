@@ -1,2 +1,2 @@
-rootProject.name = "DiscordBotJDA"
+rootProject.name = "ACDiscordBot-Java"
 
